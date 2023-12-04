@@ -1,9 +1,9 @@
 <?php
 
 class UserController {
-    private $_method; //get, post, put.
-    private $_complement; //get user 1 o 2.
-    private $_data; // datos a insertar o actualizar
+    private $_method; 
+    private $_complement; 
+    private $_data; 
 
     function __construct($method, $complement, $data) {
         $this->_method = $method;
@@ -49,24 +49,21 @@ class UserController {
         }
     }
 
-
     private function generateSalting(){
         $trimmed_data="";
-        //var_dump($this->_data);
         $pattern = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/';
         if (preg_match($pattern, $this->_data['use_pss'])) {
             if(($this->_data !="") || (!empty($this->_data))){
                 $trimmed_data = array_map('trim', $this->_data);
                 $trimmed_data['use_pss'] = md5($trimmed_data['use_pss']);
-                //salting
-                $identifier = str_replace("$", "y78", crypt($trimmed_data['use_mail'], 'ser3478'));
-                $key = str_replace("$", "ERT", crypt($trimmed_data['use_pss'], '$uniempresarial2024'));
+                $identifier = str_replace("$", "ue56", crypt($trimmed_data['use_mail'], 'ue56'));
+                $key = str_replace("$", "ue23", crypt($trimmed_data['use_pss'], 'ue23'));
                 $trimmed_data['us_identifier'] = $identifier;
                 $trimmed_data['us_key'] = $key;
                 return $trimmed_data;
             }
         } else {
-            $message = "la clave no cuenta con los parametros requeridos";
+            $message = "La contraseña debe contener una mayúscula, una minúscula y un caracter especial";
             die($message);
         }
     }

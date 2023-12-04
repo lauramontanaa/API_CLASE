@@ -46,21 +46,20 @@ class UserModel {
      static public function login($data){
         $user = $data['use_mail'];
         $pass = md5($data['use_pss']);
-
         if (!empty($user) && !empty($pass)){
-            $query="SELECT  use_id, us_key FROM users WHERE use_mail = '$user' and use_pss='$pass' and us_status='1'";
+            $query="SELECT use_id, us_identifier, us_key FROM users WHERE use_mail = '$user' and use_pss='$pass' and us_status='1'";
             $statement = Connection::connection()->prepare($query);
             $statement-> execute();
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);
             return $result;
         }else{
-            return "NO TIENE CREDENCIALES";
+            return "No ha ingresado sus credenciales. Por favor, ingrese su correo y contraseña.";
         }
     }
 
-    static public function getUserAuth(){
+    static public function getUserAuth($identifier,$key){
         $query="";
-        $query = "SELECT us_identifier, us_key FROM users WHERE us_status = '1';";
+        $query="SELECT use_id FROM users WHERE us_identifier = '$identifier' and us_key='$key' and us_status='1'";
         $statement = Connection::connection()->prepare($query);
         $statement->execute();
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -71,7 +70,7 @@ class UserModel {
 
     static public function updateUser($id, $data) {
         $pss = md5($data['use_pss']);
-        $query = "UPDATE users SET use_email='".$data['use_email']."',use_pss='".$pss."' WHERE use_id = ".$id.";";
+        $query = "UPDATE users SET use_mail='".$data['use_mail']."',use_pss='".$pss."' WHERE use_id = ".$id.";";
         $statement = Connection::connection()->prepare($query);
         $statement->execute();
         $mensaje = array(
@@ -81,21 +80,21 @@ class UserModel {
     }
 
     static private function getStatus($id){
-        $query = "SELECT use_status FROM users WHERE use_id = '$id'";
+        $query = "SELECT us_status FROM users WHERE use_id = '$id'";
         $statement = Connection::connection()->prepare($query);
         $statement->execute();
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-        return $result[0]['use_status'];
+        return $result[0]['us_status'];
     }
 
     static public function deleteUser($id) {
         $status = self::getStatus($id);
         $updatedStatus = ($status == 0) ? 1 : 0;
-        $query = "UPDATE users SET use_status='".$updatedStatus."' WHERE use_id = ".$id.";";
+        $query = "UPDATE users SET us_status='".$updatedStatus."' WHERE use_id = ".$id.";";
         $statement = Connection::connection()->prepare($query);
         $statement->execute();
         $mensaje = array(
-            "mensaje"=>"Usuario Eliminado"
+            "mensaje"=>"Usuario desactivado"
         );
         return $mensaje;
     }

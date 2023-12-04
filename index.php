@@ -10,18 +10,17 @@ header("Allow: GET, POST, OPTIONS, PUT, DELETE");
 header('Access-Control-Allow-Headers: Authorization');
 $rutasArray = explode("/", $_SERVER['REQUEST_URI']);
 $endPoint = (array_filter($rutasArray)[2]); 
+
 if ($endPoint != 'login' && $endPoint != 'register' ){
     if(isset($_SERVER['PHP_AUTH_USER']) && (isset($_SERVER['PHP_AUTH_PW']))){
         $ok = false;
         $identifier = $_SERVER['PHP_AUTH_USER'];
         $key = $_SERVER['PHP_AUTH_PW'];
-        $users = UserModel::getUserAuth();
-        foreach($users as $u){
-            if($identifier.":".$key == $u["us_identifier"].":".$u["us_key"]){
-                $ok = true;
-            }
+        $users = UserModel::getUserAuth($identifier,$key);
+        if($users!=null){
+            $ok = true;
         }
-        if($ok){
+        if($ok==true){
             $routes = new RoutesController();
             $routes->index();
         }
@@ -41,4 +40,5 @@ if ($endPoint != 'login' && $endPoint != 'register' ){
     $routes = new RoutesController();
     $routes->index();
 }
+
 ?>
